@@ -1,0 +1,252 @@
+body {
+  background: #00aecc;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+}
+
+.block {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 80px;
+  font-weight: 400;
+  font-family: "Fredoka One", cursive;
+  color: #fff;
+  -webkit-text-stroke: 3px black;
+  margin-top: 70px;
+  margin-bottom: 20px;
+}
+
+#content-page {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow: auto;
+  height: 70vh;
+  padding-right: 10px;
+}
+
+#add-tasks {
+  font-size: 30px;
+}
+
+.btn {
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  margin-left: 10px;
+  background: #fff;
+  border: 0.15rem solid;
+  border-radius: 10px;
+}
+
+.btn:hover {
+  background: #00aecc;
+}
+
+.task-container {
+  width: 500px;
+  display: flex;
+  align-items: center;
+  background: #b5e6f0;
+  border: 0.2rem solid;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.text-task {
+  font-family: "Comic Neue", cursive;
+  font-weight: 400;
+  font-size: 30px;
+  color: #000;
+  width: 350px;
+  overflow-wrap: anywhere;
+}
+
+.done-text {
+  color: rgba(0, 0, 0, 0.3);
+  text-decoration: line-through;
+}
+
+.svg-icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 40px;
+  padding: 10px;
+  fill: #fff;
+}
+
+.fa-edit.svg-icon {
+  font-size: 30px;
+  color: rgb(63, 63, 63);
+  width: 30px;
+  height: 30px;
+}
+
+.fa-trash-alt.svg-icon {
+  font-size: 30px;
+  color: rgb(63, 63, 63);
+  width: 30px;
+  height: 30px;
+}
+
+.fa-check-circle.svg-icon {
+  font-size: 30px;
+  color: rgb(63, 63, 63);
+  width: 30px;
+  height: 30px;
+}
+
+.fa-window-close.svg-icon {
+  font-size: 30px;
+  color: rgb(63, 63, 63);
+  width: 30px;
+  height: 30px;
+}
+
+.svg-icon:last-child {
+  margin-left: 10px;
+  margin-right: 20px;
+}
+
+.svg-icon:hover {
+  color: #000;
+}
+
+.check {
+  width: 30px;
+  height: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.edit-text {
+  font-family: "Ubuntu Mono", monospace;
+  font-size: 30px;
+  resize: none;
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 254px;
+}
+
+.edit-text::-webkit-scrollbar {
+  width: 0;
+}
+
+@media screen and (max-width: 1030px) {
+  h1 {
+    font-size: 110px;
+  }
+
+  .task-container {
+    width: 743px;
+  }
+
+  #add-tasks {
+    width: 620px;
+  }
+
+  .text-task {
+    width: 600px;
+  }
+
+  .edit-text {
+    width: 503px;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .task-container {
+    width: 510px;
+  }
+
+  .text-task {
+    width: 360px;
+  }
+
+  #add-tasks {
+    width: 400px;
+  }
+
+  .edit-text {
+    width: 308px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  h1 {
+    font-size: 55px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .task-container {
+    width: 280px;
+  }
+
+  .btn {
+    width: 60px;
+    height: 60px;
+    margin-top: 10px;
+  }
+
+  .text-task {
+    width: 165px;
+  }
+
+  .edit-text {
+    width: 150px;
+  }
+
+  #add-tasks {
+    width: 280px;
+    height: 50px;
+  }
+
+  #content-page {
+    height: 54vh;
+  }
+
+  .check {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .svg-icon {
+    margin: 0;
+    padding: 5px;
+  }
+
+  .svg-icon:last-child {
+    font-size: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .fa-edit.svg-icon {
+    font-size: 40px;
+  }
+
+  .fa-check-circle.svg-icon {
+    font-size: 40px;
+  }
+
+  .fa-trash-alt.svg-icon {
+    font-size: 40px;
+  }
+}

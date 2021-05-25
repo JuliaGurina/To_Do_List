@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,400;1,400;1,700&display=swap&family=Ubuntu+Mono&display=swap&family=Fredoka+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <title>ToDoList</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="block">
+        <h1>To-Do list</h1>
+        <div>
+          <input type="text" id="add-tasks" />
+          <button class="btn" onclick="onClickButton()">+</button>
+          <button class="btn" onclick="onClickDelete()">×</button>
+        </div>
+      </div>
+      <div id="content-page"></div>
+    </div>
+  </body>
+
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/underscore@1.13.1/underscore-umd-min.js"></script>
+  <script src="script.js"></script>
+</html>
