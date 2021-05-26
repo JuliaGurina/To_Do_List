@@ -4,12 +4,17 @@ let input = null;
 let indexEdit = -1;
 let tempEdit = "";
 
-window.onload = function init() {
+window.onload = async function init() {
   input = document.getElementById("add-tasks");
   input.addEventListener("change", updateValue);
   input.addEventListener("keyup", updateValue1);
+//объеденим to-do лист с запросами на сервер
+  const resp = await fetch('http://localhost:8000/allTasks', {
+    method: 'GET'
+  });
+  let result = await resp.json();
+  allTasks = result.data;//выводит задачи, которые есть на сервере 
   render();
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
 };
 
 //------Добавление Tasks
@@ -31,12 +36,27 @@ updateValue2 = (e) => {
   }
 };
 
-onClickButton = () => {
+onClickButton = async () => {
   if (valueInput === "") return alert(" Введите текст");
   allTasks.push({
     text: valueInput,
     isCheck: false,
   });
+
+  const resp = await fetch('http://localhost:8000/createTask', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      'Access-Cantrol-Allow-Origin': '*'
+    },
+    body: JSON.stringify({
+      text: valueInput,
+      isCheck: false,
+    })
+  });
+  let result = await resp.json();
+  allTasks = result.data;
+
   valueInput = ""; //обнуление input
   input.value = "";
   localStorage.setItem("tasks", JSON.stringify(allTasks));
@@ -61,7 +81,6 @@ onChangeCheckbox = (index) => {
 
 onClickSvgEdit = (index) => {
   indexEdit = index;
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
@@ -75,7 +94,6 @@ onClickSvgDone = () => {
 
 onClickSvgCancel = (index) => {
   indexEdit = -1;
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
@@ -110,7 +128,7 @@ render = () => {
     checkbox.type = "checkbox";
     checkbox.className = "check";
     checkbox.checked = item.isCheck;
-    checkbox.onchange = function () {
+    checkbox.onchange = () => {
       onChangeCheckbox(index);
     };
     container.appendChild(checkbox);
@@ -126,7 +144,7 @@ render = () => {
       //--------Done
       const svgDone = document.createElement("i");
       svgDone.className = "far fa-check-circle svg-icon";
-      svgDone.onclick = function () {
+      svgDone.onclick = () => {
         onClickSvgDone();
       };
       container.appendChild(editInput);
@@ -135,7 +153,7 @@ render = () => {
       //--------Cancel
       const svgCancel = document.createElement("i");
       svgCancel.className = "far fa-window-close svg-icon";
-      svgCancel.onclick = function () {
+      svgCancel.onclick = () => {
         onClickSvgCancel(index);
       };
       container.appendChild(svgCancel);
@@ -149,7 +167,7 @@ render = () => {
       //--------Edit
       const svgEdit = document.createElement("i");
       svgEdit.className = "far fa-edit svg-icon";
-      svgEdit.onclick = function () {
+      svgEdit.onclick = () => {
         tempEdit = item.text;
         onClickSvgEdit(index);
       };
@@ -159,7 +177,7 @@ render = () => {
       //-------Delete
       const svgDelete = document.createElement("i");
       svgDelete.className = "far fa-trash-alt svg-icon";
-      svgDelete.onclick = function () {
+      svgDelete.onclick = () => {
         onClickSvgDelete(index);
       };
       container.appendChild(svgDelete);
@@ -167,6 +185,4 @@ render = () => {
 
     content.appendChild(container);
   });
-
-  allTasks.sort;
 };
