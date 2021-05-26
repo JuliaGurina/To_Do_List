@@ -4,11 +4,16 @@ let input = null;
 let indexEdit = -1;
 let tempEdit = "";
 
-window.onload = function init() {
+window.onload = async function init() {
   input = document.getElementById("add-tasks");
   input.addEventListener("change", updateValue);
   input.addEventListener("keyup", updateValue1);
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
+//объеденим to-do лист с запросами на сервер
+  const resp = await fetch('http://localhost:8000/allTasks', {
+    method: 'GET'
+  });
+  let result = await resp.json();
+  allTasks = result.data;//выводит задачи, которые есть на сервере 
   render();
 };
 
@@ -31,12 +36,27 @@ updateValue2 = (e) => {
   }
 };
 
-onClickButton = () => {
+onClickButton = async () => {
   if (valueInput === "") return alert(" Введите текст");
   allTasks.push({
     text: valueInput,
     isCheck: false,
   });
+
+  const resp = await fetch('http://localhost:8000/createTask', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      'Access-Cantrol-Allow-Origin': '*'
+    },
+    body: JSON.stringify({
+      text: valueInput,
+      isCheck: false,
+    })
+  });
+  let result = await resp.json();
+  allTasks = result.data;
+
   valueInput = ""; //обнуление input
   input.value = "";
   localStorage.setItem("tasks", JSON.stringify(allTasks));
@@ -165,5 +185,4 @@ render = () => {
 
     content.appendChild(container);
   });
-
 };
