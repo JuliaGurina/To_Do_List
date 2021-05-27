@@ -8,7 +8,7 @@ window.onload = async function init() {
   input = document.getElementById("add-tasks");
   input.addEventListener("change", updateValue);
   input.addEventListener("keyup", updateValue1);
-//объеденим to-do лист с запросами на сервер
+//объеденим to-do лист с запросами на сервер, получение задач
   const resp = await fetch('http://localhost:8000/allTasks', {
     method: 'GET'
   });
@@ -42,7 +42,7 @@ onClickButton = async () => {
     text: valueInput,
     isCheck: false,
   });
-
+  //создание задач 
   const resp = await fetch('http://localhost:8000/createTask', {
     method: 'POST',
     headers: {
@@ -63,30 +63,64 @@ onClickButton = async () => {
   render();
 };
 
-onClickDelete = () => {
-  allTasks = [];
+onClickDelete = async () => {
+  // удаление все Tasks
+  await allTasks.forEach( async (element) => {
+    const resp = await fetch(`http://localhost:8000/deleteTask?id=${element.id}`, {
+      method: 'DELETE',
+    });
+    let result = await resp.json();
+    allTasks = result.data;
+    render();
+  });
+
   localStorage.setItem("tasks", JSON.stringify(allTasks));
-  render();
 };
 
 updateValue = (event) => {
   valueInput = event.target.value;
 };
 
-onChangeCheckbox = (index) => {
-  allTasks[index].isCheck = !allTasks[index].isCheck;
+onChangeCheckbox = async (index) => {
+  //обновление существующих данных Checkbox
+  let {id, isCheck} = allTasks[index];
+  const resp = await fetch('http://localhost:8000/updateTask', {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      'Access-Cantrol-Allow-Origin': '*'
+    },
+    body: JSON.stringify({id, isCheck: !isCheck}),
+  });
+
+  let result = await resp.json();
+  allTasks = result.data;
+
   localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
-onClickSvgEdit = (index) => {
+onClickSvgEdit = async (index) => {
   indexEdit = index;
   render();
 };
 
-onClickSvgDone = () => {
+onClickSvgDone = async (index) => {
   if (tempEdit === "") return alert(" Введите текст");
-  allTasks[indexEdit].text = tempEdit;
+  //обновление существующих данных Input(text)
+  const{id} = allTasks[index];
+  const resp = await fetch('http://localhost:8000/updateTask', {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      'Access-Cantrol-Allow-Origin': '*'
+    },
+    body: JSON.stringify({id, text: tempEdit}),
+  });
+  
+  let result = await resp.json();
+  allTasks = result.data;
+
   indexEdit = -1;
   localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
@@ -97,9 +131,13 @@ onClickSvgCancel = (index) => {
   render();
 };
 
-onClickSvgDelete = (index) => {
-  allTasks.splice(index, 1);
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
+onClickSvgDelete = async (index) => {
+  // удаление одного task
+  const resp = await fetch(`http://localhost:8000/deleteTask?id=${allTasks[index].id}`, {
+    method: 'DELETE',
+  });
+  let result = await resp.json();
+  allTasks = result.data;
   render();
 };
 
@@ -145,7 +183,7 @@ render = () => {
       const svgDone = document.createElement("i");
       svgDone.className = "far fa-check-circle svg-icon";
       svgDone.onclick = () => {
-        onClickSvgDone();
+        onClickSvgDone(index);
       };
       container.appendChild(editInput);
       container.appendChild(svgDone);
