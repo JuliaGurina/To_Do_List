@@ -64,7 +64,6 @@ onClickButton = async () => {
 };
 
 onClickDelete = async () => {
-  // allTasks = [];
   // удаление все Tasks
   await allTasks.forEach( async (element) => {
     const resp = await fetch(`http://localhost:8000/deleteTask?id=${element.id}`, {
@@ -83,19 +82,17 @@ updateValue = (event) => {
 };
 
 onChangeCheckbox = async (index) => {
-  // allTasks[index].isCheck = !allTasks[index].isCheck;
   //обновление существующих данных Checkbox
+  let {id, isCheck} = allTasks[index];
   const resp = await fetch('http://localhost:8000/updateTask', {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
       'Access-Cantrol-Allow-Origin': '*'
     },
-    body: JSON.stringify({
-      isCheck: !(allTasks[index].isCheck),
-      id: allTasks[index].id,
-    })
+    body: JSON.stringify({id, isCheck: !isCheck}),
   });
+
   let result = await resp.json();
   allTasks = result.data;
 
@@ -110,19 +107,17 @@ onClickSvgEdit = async (index) => {
 
 onClickSvgDone = async (index) => {
   if (tempEdit === "") return alert(" Введите текст");
-  // allTasks[indexEdit].text = tempEdit;
   //обновление существующих данных Input(text)
+  const{id} = allTasks[index];
   const resp = await fetch('http://localhost:8000/updateTask', {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
       'Access-Cantrol-Allow-Origin': '*'
     },
-    body: JSON.stringify({
-      text: tempEdit,
-      id: allTasks[index].id,
-    })
+    body: JSON.stringify({id, text: tempEdit}),
   });
+  
   let result = await resp.json();
   allTasks = result.data;
 
@@ -137,14 +132,12 @@ onClickSvgCancel = (index) => {
 };
 
 onClickSvgDelete = async (index) => {
-  // allTasks.splice(index, 1);
   // удаление одного task
   const resp = await fetch(`http://localhost:8000/deleteTask?id=${allTasks[index].id}`, {
     method: 'DELETE',
   });
   let result = await resp.json();
   allTasks = result.data;
-  // localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
