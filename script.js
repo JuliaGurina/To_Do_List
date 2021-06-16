@@ -1,4 +1,4 @@
-let allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let allTasks = [];
 let valueInput = "";
 let input = null;
 let indexEdit = -1;
@@ -8,12 +8,11 @@ window.onload = async function init() {
   input = document.getElementById("add-tasks");
   input.addEventListener("change", updateValue);
   input.addEventListener("keyup", updateValue1);
-//объеденим to-do лист с запросами на сервер, получение задач
-  const resp = await fetch('http://localhost:8000/allTasks', {
-    method: 'GET'
+  const resp = await fetch("http://localhost:4000/allTasks", {
+    method: "GET",
   });
   let result = await resp.json();
-  allTasks = result.data;//выводит задачи, которые есть на сервере 
+  allTasks = result.data;
   render();
 };
 
@@ -22,14 +21,12 @@ updateValue1 = (event) => {
   if (event.key === "Enter") {
     onClickButton();
   }
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
-updateValue2 = (e) => {
+updateValue2 = (e, index) => {
   if (e.key === "Enter") {
-    onClickSvgDone();
-    localStorage.setItem("tasks", JSON.stringify(allTasks));
+    onClickSvgDone(index);
     render();
   } else {
     tempEdit = e.target.value;
@@ -38,43 +35,34 @@ updateValue2 = (e) => {
 
 onClickButton = async () => {
   if (valueInput === "") return alert(" Введите текст");
-  allTasks.push({
-    text: valueInput,
-    isCheck: false,
-  });
-  //создание задач 
-  const resp = await fetch('http://localhost:8000/createTask', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Access-Cantrol-Allow-Origin': '*'
-    },
-    body: JSON.stringify({
-      text: valueInput,
-      isCheck: false,
-    })
-  });
-  let result = await resp.json();
-  allTasks = result.data;
+  {
+    const resp = await fetch("http://localhost:4000/createTask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        "Access-Control-Allow_origin": "*",
+      },
+      body: JSON.stringify({
+        text: valueInput,
+        isCheck: false,
+      }),
+    });
+    let result = await resp.json();
+    allTasks.push(result.data);
 
-  valueInput = ""; //обнуление input
-  input.value = "";
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
+    valueInput = ""; //обнуление input
+    input.value = "";
+  }
   render();
 };
 
 onClickDelete = async () => {
-  // удаление все Tasks
-  await allTasks.forEach( async (element) => {
-    const resp = await fetch(`http://localhost:8000/deleteTask?id=${element.id}`, {
-      method: 'DELETE',
-    });
-    let result = await resp.json();
-    allTasks = result.data;
-    render();
+  const resp = await fetch(`http://localhost:4000/deleteTasks`, {
+    method: "DELETE",
   });
-
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
+  let result = await resp.json();
+  allTasks = [];
+  render();
 };
 
 updateValue = (event) => {
@@ -82,47 +70,42 @@ updateValue = (event) => {
 };
 
 onChangeCheckbox = async (index) => {
-  //обновление существующих данных Checkbox
-  let {id, isCheck} = allTasks[index];
-  const resp = await fetch('http://localhost:8000/updateTask', {
-    method: 'PATCH',
+  let { _id, isCheck } = allTasks[index];
+
+  const resp = await fetch("http://localhost:4000/updateTask", {
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Access-Cantrol-Allow-Origin': '*'
+      "Content-Type": "application/json;charset=utf-8",
+      "Access-Control-Allow_origin": "*",
     },
-    body: JSON.stringify({id, isCheck: !isCheck}),
+    body: JSON.stringify({ _id, isCheck: !isCheck }),
   });
 
   let result = await resp.json();
   allTasks = result.data;
 
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
-onClickSvgEdit = async (index) => {
+onClickSvgEdit = (index) => {
   indexEdit = index;
   render();
 };
 
 onClickSvgDone = async (index) => {
-  if (tempEdit === "") return alert(" Введите текст");
-  //обновление существующих данных Input(text)
-  const{id} = allTasks[index];
-  const resp = await fetch('http://localhost:8000/updateTask', {
-    method: 'PATCH',
+  if (tempEdit === "") return alert("Введите текст");
+  indexEdit = -1;
+  const { _id } = allTasks[index];
+  const resp = await fetch("http://localhost:4000/updateTask", {
+    method: "PATCH",
     headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Access-Cantrol-Allow-Origin': '*'
+      "Content-Type": "application/json;charset=utf-8",
+      "Access-Control-Allow_origin": "*",
     },
-    body: JSON.stringify({id, text: tempEdit}),
+    body: JSON.stringify({ _id, text: tempEdit }),
   });
-  
   let result = await resp.json();
   allTasks = result.data;
-
-  indexEdit = -1;
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
   render();
 };
 
@@ -132,10 +115,12 @@ onClickSvgCancel = (index) => {
 };
 
 onClickSvgDelete = async (index) => {
-  // удаление одного task
-  const resp = await fetch(`http://localhost:8000/deleteTask?id=${allTasks[index].id}`, {
-    method: 'DELETE',
-  });
+  const resp = await fetch(
+    `http://localhost:4000/deleteTask?_id=${allTasks[index]._id}`,
+    {
+      method: "DELETE",
+    }
+  );
   let result = await resp.json();
   allTasks = result.data;
   render();
@@ -166,7 +151,7 @@ render = () => {
     checkbox.type = "checkbox";
     checkbox.className = "check";
     checkbox.checked = item.isCheck;
-    checkbox.onchange = () => {
+    checkbox.onchange = function () {
       onChangeCheckbox(index);
     };
     container.appendChild(checkbox);
@@ -176,13 +161,13 @@ render = () => {
       editInput.className = "edit-text";
       editInput.value = tempEdit;
       editInput.rows = Math.ceil(tempEdit.length / 16);
-      editInput.onkeyup = (e) => updateValue2(e);
+      editInput.onkeyup = (e) => updateValue2(e, index);
       editInput.oninput = () => textArea(editInput);
 
       //--------Done
       const svgDone = document.createElement("i");
       svgDone.className = "far fa-check-circle svg-icon";
-      svgDone.onclick = () => {
+      svgDone.onclick = function () {
         onClickSvgDone(index);
       };
       container.appendChild(editInput);
@@ -191,7 +176,7 @@ render = () => {
       //--------Cancel
       const svgCancel = document.createElement("i");
       svgCancel.className = "far fa-window-close svg-icon";
-      svgCancel.onclick = () => {
+      svgCancel.onclick = function () {
         onClickSvgCancel(index);
       };
       container.appendChild(svgCancel);
@@ -205,7 +190,7 @@ render = () => {
       //--------Edit
       const svgEdit = document.createElement("i");
       svgEdit.className = "far fa-edit svg-icon";
-      svgEdit.onclick = () => {
+      svgEdit.onclick = function () {
         tempEdit = item.text;
         onClickSvgEdit(index);
       };
@@ -215,7 +200,7 @@ render = () => {
       //-------Delete
       const svgDelete = document.createElement("i");
       svgDelete.className = "far fa-trash-alt svg-icon";
-      svgDelete.onclick = () => {
+      svgDelete.onclick = function () {
         onClickSvgDelete(index);
       };
       container.appendChild(svgDelete);
