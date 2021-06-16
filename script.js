@@ -167,7 +167,7 @@ render = () => {
       //--------Done
       const svgDone = document.createElement("i");
       svgDone.className = "far fa-check-circle svg-icon";
-      svgDone.onclick = function () {
+      svgDone.onclick = () => {
         onClickSvgDone(index);
       };
       container.appendChild(editInput);
@@ -176,7 +176,7 @@ render = () => {
       //--------Cancel
       const svgCancel = document.createElement("i");
       svgCancel.className = "far fa-window-close svg-icon";
-      svgCancel.onclick = function () {
+      svgCancel.onclick = () => {
         onClickSvgCancel(index);
       };
       container.appendChild(svgCancel);
@@ -190,7 +190,7 @@ render = () => {
       //--------Edit
       const svgEdit = document.createElement("i");
       svgEdit.className = "far fa-edit svg-icon";
-      svgEdit.onclick = function () {
+      svgEdit.onclick = () => {
         tempEdit = item.text;
         onClickSvgEdit(index);
       };
